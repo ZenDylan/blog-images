@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f6f7">
+  <title>图片转 Markdown</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f6f7;
+      --surface: #ffffff;
+      --surface-strong: #eef3f1;
+      --text: #1f2428;
+      --muted: #66707a;
+      --border: #d8dee4;
+      --accent: #116d5d;
+      --accent-strong: #0b584b;
+      --danger: #b42318;
+      --danger-bg: #fff1f0;
+      --ok: #1f7a4d;
+      --ok-bg: #ecf8f1;
+      --shadow: 0 18px 50px rgba(27, 31, 36, 0.08);
+      --radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .app {
+      width: min(100%, 900px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: max(18px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .branch-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      max-width: 45%;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--surface);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .panel {
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label,
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(17, 109, 93, 0.14);
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      min-height: 20px;
+      accent-color: var(--accent);
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .primary,
+    .secondary,
+    .ghost,
+    .danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 44px;
+      padding: 0 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .primary:hover {
+      background: var(--accent-strong);
+    }
+
+    .secondary {
+      color: var(--accent);
+      border: 1px solid rgba(17, 109, 93, 0.28);
+      background: var(--surface-strong);
+    }
+
+    .ghost {
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .danger {
+      color: var(--danger);
+      border: 1px solid rgba(180, 35, 24, 0.25);
+      background: var(--danger-bg);
+    }
+
+    .hidden-file {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .drop {
+      display: grid;
+      place-items: center;
+      min-height: 138px;
+      border: 1px dashed #aeb8c2;
+      border-radius: var(--radius);
+      background: #fbfcfd;
+      text-align: center;
+    }
+
+    .drop.dragover {
+      border-color: var(--accent);
+      background: var(--surface-strong);
+    }
+
+    .drop-inner {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      padding: 16px;
+    }
+
+    .drop-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .queue {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .file-row,
+    .result-row {
+      display: grid;
+      grid-template-columns: 60px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 76px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #e9edf1;
+    }
+
+    .file-meta,
+    .result-meta {
+      min-width: 0;
+    }
+
+    .file-name,
+    .result-link {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .file-sub,
+    .result-sub,
+    .status {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      margin-top: 10px;
+      min-height: 22px;
+    }
+
+    .status.ok {
+      color: var(--ok);
+    }
+
+    .status.err {
+      color: var(--danger);
+    }
+
+    .mini {
+      min-height: 36px;
+      padding: 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e8edf1;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #116d5d, #2f7fd3);
+      transition: width 0.2s ease;
+    }
+
+    .empty {
+      padding: 16px 0 2px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .footer-actions {
+      position: sticky;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .footer-actions .primary {
+      width: 100%;
+    }
+
+    .count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: #fff;
+      font-weight: 800;
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .branch-pill {
+        max-width: 52%;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .button-row .primary,
+      .button-row .secondary,
+      .button-row .ghost,
+      .button-row .danger {
+        width: 100%;
+      }
+
+      .file-row,
+      .result-row {
+        grid-template-columns: 54px minmax(0, 1fr) auto;
+      }
+
+      .thumb {
+        width: 54px;
+        height: 54px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1>图片转 Markdown</h1>
+      <span class="branch-pill" id="repoPill">ZenDylan/blog-images</span>
+    </header>
+
+    <section class="panel" aria-label="GitHub 设置">
+      <div class="grid">
+        <div class="field full">
+          <label for="token">GitHub Token</label>
+          <input id="token" name="token" type="password" autocomplete="off" inputmode="text" placeholder="github_pat_...">
+        </div>
+        <div class="field">
+          <label for="owner">Owner</label>
+          <input id="owner" name="owner" type="text" value="ZenDylan" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="repo">Repo</label>
+          <input id="repo" name="repo" type="text" value="blog-images" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="branch">Branch</label>
+          <input id="branch" name="branch" type="text" value="main" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="cdn">链接</label>
+          <select id="cdn" name="cdn">
+            <option value="raw">GitHub Raw</option>
+            <option value="jsdelivr">jsDelivr CDN</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="pathTemplate">保存目录</label>
+          <input id="pathTemplate" name="pathTemplate" type="text" value="photos/{yyyy}/{mm}" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <span class="label">本机保存</span>
+          <label class="inline">
+            <input id="rememberToken" name="rememberToken" type="checkbox">
+            <span>记住 Token</span>
+          </label>
+        </div>
+        <div class="field">
+          <span class="label">上传格式</span>
+          <label class="inline">
+            <input id="convertJpeg" name="convertJpeg" type="checkbox" checked>
+            <span>转成 JPG</span>
+          </label>
+        </div>
+        <div class="field">
+          <label for="maxWidth">最长边</label>
+          <input id="maxWidth" name="maxWidth" type="number" min="600" max="6000" step="100" value="2200">
+        </div>
+        <div class="field">
+          <label for="quality">质量 <span id="qualityValue">86%</span></label>
+          <input id="quality" name="quality" type="range" min="55" max="95" step="1" value="86">
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="ghost" id="saveSettings" type="button">保存设置</button>
+        <button class="danger" id="clearSettings" type="button">清除本机设置</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="选择图片">
+      <div class="drop" id="dropZone">
+        <div class="drop-inner">
+          <div class="drop-title">选择或拍摄照片</div>
+          <div class="button-row">
+            <label class="secondary" for="libraryInput">选择照片</label>
+            <label class="secondary" for="cameraInput">直接拍照</label>
+          </div>
+        </div>
+      </div>
+      <input class="hidden-file" id="libraryInput" type="file" accept="image/*" multiple>
+      <input class="hidden-file" id="cameraInput" type="file" accept="image/*" capture="environment">
+      <div class="queue" id="queue"></div>
+      <div class="status" id="status"></div>
+      <div class="progress" aria-hidden="true">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Markdown 结果">
+      <div class="field">
+        <label for="markdownOutput">Markdown</label>
+        <textarea id="markdownOutput" readonly></textarea>
+      </div>
+      <div class="button-row">
+        <button class="primary" id="copyAll" type="button">复制全部</button>
+        <button class="ghost" id="clearResults" type="button">清空结果</button>
+      </div>
+      <div class="queue" id="results"></div>
+    </section>
+
+    <div class="footer-actions">
+      <button class="primary" id="uploadAll" type="button">上传并生成 Markdown</button>
+      <span class="count" id="fileCount">0</span>
+    </div>
+  </main>
+
+  <script>
+    const STORE_KEY = "githubImageUploader.settings.v1";
+    const TOKEN_KEY = "githubImageUploader.token.v1";
+
+    const els = {
+      token: document.querySelector("#token"),
+      owner: document.querySelector("#owner"),
+      repo: document.querySelector("#repo"),
+      branch: document.querySelector("#branch"),
+      cdn: document.querySelector("#cdn"),
+      pathTemplate: document.querySelector("#pathTemplate"),
+      rememberToken: document.querySelector("#rememberToken"),
+      convertJpeg: document.querySelector("#convertJpeg"),
+      maxWidth: document.querySelector("#maxWidth"),
+      quality: document.querySelector("#quality"),
+      qualityValue: document.querySelector("#qualityValue"),
+      repoPill: document.querySelector("#repoPill"),
+      saveSettings: document.querySelector("#saveSettings"),
+      clearSettings: document.querySelector("#clearSettings"),
+      libraryInput: document.querySelector("#libraryInput"),
+      cameraInput: document.querySelector("#cameraInput"),
+      dropZone: document.querySelector("#dropZone"),
+      queue: document.querySelector("#queue"),
+      status: document.querySelector("#status"),
+      progressBar: document.querySelector("#progressBar"),
+      markdownOutput: document.querySelector("#markdownOutput"),
+      results: document.querySelector("#results"),
+      copyAll: document.querySelector("#copyAll"),
+      clearResults: document.querySelector("#clearResults"),
+      uploadAll: document.querySelector("#uploadAll"),
+      fileCount: document.querySelector("#fileCount")
+    };
+
+    const state = {
+      files: [],
+      results: [],
+      busy: false
+    };
+
+    function formatBytes(size) {
+      if (!Number.isFinite(size)) return "";
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      return `${(size / 1024 / 1024).toFixed(1)} MB`;
+    }
+
+    function pad(value, length = 2) {
+      return String(value).padStart(length, "0");
+    }
+
+    function dateParts(date = new Date()) {
+      return {
+        yyyy: String(date.getFullYear()),
+        yy: String(date.getFullYear()).slice(-2),
+        mm: pad(date.getMonth() + 1),
+        dd: pad(date.getDate()),
+        hh: pad(date.getHours()),
+        mi: pad(date.getMinutes()),
+        ss: pad(date.getSeconds())
+      };
+    }
+
+    function fillTemplate(template, date = new Date()) {
+      const parts = dateParts(date);
+      return template.replace(/\{(yyyy|yy|mm|dd|hh|mi|ss)\}/g, (_, key) => parts[key]);
+    }
+
+    function cleanPath(path) {
+      return path
+        .split("/")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .join("/");
+    }
+
+    function encodePath(path) {
+      return cleanPath(path)
+        .split("/")
+        .map((part) => encodeURIComponent(part))
+        .join("/");
+    }
+
+    function safeSlug(name) {
+      const withoutExt = name.replace(/\.[^.]+$/, "");
+      const normalized = withoutExt.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+      const slug = normalized
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 48);
+      return slug || "photo";
+    }
+
+    function randomId() {
+      if (globalThis.crypto && globalThis.crypto.randomUUID) return globalThis.crypto.randomUUID().slice(0, 8);
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function makeFileName(file, extension, index) {
+      const parts = dateParts();
+      const stamp = `${parts.yyyy}${parts.mm}${parts.dd}-${parts.hh}${parts.mi}${parts.ss}`;
+      return `${stamp}-${pad(index + 1)}-${safeSlug(file.name)}-${randomId()}.${extension}`;
+    }
+
+    function extensionFromFile(file) {
+      const ext = file.name.split(".").pop();
+      if (ext && ext.length <= 8 && /^[a-z0-9]+$/i.test(ext)) return ext.toLowerCase();
+      const byType = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/gif": "gif",
+        "image/webp": "webp",
+        "image/heic": "heic",
+        "image/heif": "heif"
+      };
+      return byType[file.type] || "jpg";
+    }
+
+    function status(message, kind = "") {
+      els.status.textContent = message;
+      els.status.className = `status ${kind}`.trim();
+    }
+
+    function setProgress(done, total) {
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      els.progressBar.style.width = `${pct}%`;
+    }
+
+    function getSettings() {
+      return {
+        owner: els.owner.value.trim(),
+        repo: els.repo.value.trim(),
+        branch: els.branch.value.trim(),
+        cdn: els.cdn.value,
+        pathTemplate: els.pathTemplate.value.trim(),
+        rememberToken: els.rememberToken.checked,
+        convertJpeg: els.convertJpeg.checked,
+        maxWidth: Number(els.maxWidth.value) || 2200,
+        quality: Number(els.quality.value) || 86
+      };
+    }
+
+    function applySettings(settings) {
+      if (!settings) return;
+      for (const key of ["owner", "repo", "branch", "cdn", "pathTemplate", "maxWidth", "quality"]) {
+        if (settings[key] !== undefined && els[key]) els[key].value = settings[key];
+      }
+      if (settings.rememberToken !== undefined) els.rememberToken.checked = Boolean(settings.rememberToken);
+      if (settings.convertJpeg !== undefined) els.convertJpeg.checked = Boolean(settings.convertJpeg);
+      updateComputedLabels();
+    }
+
+    function saveSettings() {
+      const settings = getSettings();
+      localStorage.setItem(STORE_KEY, JSON.stringify(settings));
+      if (settings.rememberToken) {
+        localStorage.setItem(TOKEN_KEY, els.token.value);
+      } else {
+        localStorage.removeItem(TOKEN_KEY);
+      }
+      status("设置已保存", "ok");
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (raw) applySettings(JSON.parse(raw));
+      } catch {
+        localStorage.removeItem(STORE_KEY);
+      }
+      if (els.rememberToken.checked) {
+        els.token.value = localStorage.getItem(TOKEN_KEY) || "";
+      }
+      updateComputedLabels();
+    }
+
+    function updateComputedLabels() {
+      const settings = getSettings();
+      els.qualityValue.textContent = `${settings.quality}%`;
+      els.repoPill.textContent = `${settings.owner || "owner"}/${settings.repo || "repo"}`;
+    }
+
+    function addFiles(fileList) {
+      const files = Array.from(fileList || []).filter((file) => file.type.startsWith("image/"));
+      for (const file of files) {
+        state.files.push({
+          id: randomId(),
+          file,
+          preview: URL.createObjectURL(file),
+          state: "ready",
+          note: formatBytes(file.size)
+        });
+      }
+      renderQueue();
+      if (files.length) status(`${files.length} 张图片已加入队列`);
+    }
+
+    function removeFile(id) {
+      const item = state.files.find((entry) => entry.id === id);
+      if (item && item.preview) URL.revokeObjectURL(item.preview);
+      state.files = state.files.filter((entry) => entry.id !== id);
+      renderQueue();
+    }
+
+    function renderQueue() {
+      els.fileCount.textContent = String(state.files.length);
+      els.queue.innerHTML = "";
+      if (!state.files.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "队列为空";
+        els.queue.appendChild(empty);
+        return;
+      }
+
+      for (const item of state.files) {
+        const row = document.createElement("div");
+        row.className = "file-row";
+        row.innerHTML = `
+          <img class="thumb" alt="" src="${item.preview}">
+          <div class="file-meta">
+            <span class="file-name"></span>
+            <span class="file-sub"></span>
+          </div>
+          <button class="ghost mini" type="button">移除</button>
+        `;
+        row.querySelector(".file-name").textContent = item.file.name;
+        row.querySelector(".file-sub").textContent = item.note || "";
+        row.querySelector("button").addEventListener("click", () => removeFile(item.id));
+        els.queue.appendChild(row);
+      }
+    }
+
+    function renderResults() {
+      const markdown = state.results.map((item) => item.markdown).join("\n");
+      els.markdownOutput.value = markdown;
+      els.results.innerHTML = "";
+      for (const item of state.results) {
+        const row = document.createElement("div");
+        row.className = "result-row";
+        row.innerHTML = `
+          <img class="thumb" alt="" src="${item.url}">
+          <div class="result-meta">
+            <span class="result-link"></span>
+            <span class="result-sub"></span>
+          </div>
+          <button class="ghost mini" type="button">复制</button>
+        `;
+        row.querySelector(".result-link").textContent = item.path;
+        row.querySelector(".result-sub").textContent = item.url;
+        row.querySelector("button").addEventListener("click", () => copyText(item.markdown));
+        els.results.appendChild(row);
+      }
+    }
+
+    function setBusy(value) {
+      state.busy = value;
+      for (const element of [
+        els.uploadAll,
+        els.saveSettings,
+        els.clearSettings,
+        els.copyAll,
+        els.clearResults,
+        els.owner,
+        els.repo,
+        els.branch,
+        els.cdn,
+        els.pathTemplate,
+        els.maxWidth,
+        els.quality,
+        els.convertJpeg
+      ]) {
+        element.disabled = value;
+      }
+    }
+
+    function validateBeforeUpload() {
+      const settings = getSettings();
+      const token = els.token.value.trim();
+      if (!token) throw new Error("请填写 GitHub Token");
+      if (!settings.owner || !settings.repo || !settings.branch) throw new Error("请补全仓库设置");
+      if (!state.files.length) throw new Error("请先选择照片");
+      return { settings, token };
+    }
+
+    async function blobToBase64(blob) {
+      const buffer = await blob.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      let binary = "";
+      const chunkSize = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+      }
+      return btoa(binary);
+    }
+
+    function loadImage(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("图片无法在浏览器中解码"));
+        };
+        img.src = url;
+      });
+    }
+
+    async function canvasToBlob(canvas, type, quality) {
+      if (canvas.toBlob) {
+        return new Promise((resolve, reject) => {
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("图片压缩失败"));
+          }, type, quality);
+        });
+      }
+      const dataUrl = canvas.toDataURL(type, quality);
+      const response = await fetch(dataUrl);
+      return response.blob();
+    }
+
+    async function prepareImage(file, settings) {
+      const originalExt = extensionFromFile(file);
+      const skipConvert = !settings.convertJpeg || file.type === "image/gif" || file.type === "image/svg+xml";
+      if (skipConvert) {
+        return { blob: file, extension: originalExt, note: "原图" };
+      }
+
+      try {
+        const img = await loadImage(file);
+        const longest = Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height);
+        const scale = longest > settings.maxWidth ? settings.maxWidth / longest : 1;
+        const width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+        const height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d", { alpha: false });
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, width, height);
+        context.drawImage(img, 0, 0, width, height);
+        const blob = await canvasToBlob(canvas, "image/jpeg", settings.quality / 100);
+        return { blob, extension: "jpg", note: `JPG ${formatBytes(blob.size)}` };
+      } catch (error) {
+        return { blob: file, extension: originalExt, note: `原图 ${error.message}` };
+      }
+    }
+
+    function buildGithubUrl(settings, path) {
+      const encoded = encodePath(path);
+      if (settings.cdn === "jsdelivr") {
+        return `https://cdn.jsdelivr.net/gh/${encodeURIComponent(settings.owner)}/${encodeURIComponent(settings.repo)}@${encodeURIComponent(settings.branch)}/${encoded}`;
+      }
+      return `https://raw.githubusercontent.com/${encodeURIComponent(settings.owner)}/${encodeURIComponent(settings.repo)}/${encodeURIComponent(settings.branch)}/${encoded}`;
+    }
+
+    function markdownFor(file, url) {
+      const alt = file.name.replace(/\.[^.]+$/, "").replace(/]/g, "\\]");
+      return `![${alt}](${url})`;
+    }
+
+    async function uploadBlob({ token, settings, path, blob }) {
+      const content = await blobToBase64(blob);
+      const endpoint = `https://api.github.com/repos/${encodeURIComponent(settings.owner)}/${encodeURIComponent(settings.repo)}/contents/${encodePath(path)}`;
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Accept": "application/vnd.github+json",
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-GitHub-Api-Version": "2022-11-28"
+        },
+        body: JSON.stringify({
+          message: `Add image ${path}`,
+          content,
+          branch: settings.branch
+        })
+      });
+
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const data = await response.json();
+          detail = data.message ? `：${data.message}` : "";
+        } catch {
+          detail = `：HTTP ${response.status}`;
+        }
+        throw new Error(`GitHub 上传失败${detail}`);
+      }
+
+      return response.json();
+    }
+
+    async function uploadAll() {
+      let token;
+      let settings;
+      try {
+        ({ token, settings } = validateBeforeUpload());
+      } catch (error) {
+        status(error.message, "err");
+        return;
+      }
+
+      saveSettings();
+      setBusy(true);
+      setProgress(0, state.files.length);
+      const uploaded = [];
+      const failed = [];
+      const uploadDate = new Date();
+      const dir = cleanPath(fillTemplate(settings.pathTemplate || "photos/{yyyy}/{mm}", uploadDate));
+
+      try {
+        for (let index = 0; index < state.files.length; index += 1) {
+          const item = state.files[index];
+          status(`正在处理 ${index + 1}/${state.files.length}：${item.file.name}`);
+          try {
+            const prepared = await prepareImage(item.file, settings);
+            const fileName = makeFileName(item.file, prepared.extension, index);
+            const path = cleanPath(`${dir}/${fileName}`);
+            status(`正在上传 ${index + 1}/${state.files.length}：${fileName}`);
+            await uploadBlob({ token, settings, path, blob: prepared.blob });
+            const url = buildGithubUrl(settings, path);
+            uploaded.push({
+              file: item.file,
+              path,
+              url,
+              markdown: markdownFor(item.file, url),
+              note: prepared.note
+            });
+            setProgress(index + 1, state.files.length);
+          } catch (error) {
+            failed.push(`${item.file.name}：${error.message}`);
+          }
+        }
+
+        state.results.unshift(...uploaded);
+        for (const item of state.files) {
+          if (item.preview) URL.revokeObjectURL(item.preview);
+        }
+        state.files = [];
+        renderQueue();
+        renderResults();
+
+        if (failed.length) {
+          status(`已上传 ${uploaded.length} 张，失败 ${failed.length} 张。${failed[0]}`, "err");
+        } else {
+          status(`已上传 ${uploaded.length} 张图片`, "ok");
+        }
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function copyText(text) {
+      if (!text) {
+        status("没有可复制的内容", "err");
+        return;
+      }
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          temp.style.position = "fixed";
+          temp.style.left = "-9999px";
+          document.body.appendChild(temp);
+          temp.focus();
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+        }
+        status("已复制", "ok");
+      } catch {
+        els.markdownOutput.focus();
+        els.markdownOutput.select();
+        status("请手动复制文本框内容", "err");
+      }
+    }
+
+    function clearSettings() {
+      localStorage.removeItem(STORE_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+      els.token.value = "";
+      applySettings({
+        owner: "ZenDylan",
+        repo: "blog-images",
+        branch: "main",
+        cdn: "raw",
+        pathTemplate: "photos/{yyyy}/{mm}",
+        rememberToken: false,
+        convertJpeg: true,
+        maxWidth: 2200,
+        quality: 86
+      });
+      status("本机设置已清除", "ok");
+    }
+
+    for (const input of [els.owner, els.repo, els.branch, els.cdn, els.pathTemplate, els.rememberToken, els.convertJpeg, els.maxWidth, els.quality]) {
+      input.addEventListener("input", updateComputedLabels);
+      input.addEventListener("change", updateComputedLabels);
+    }
+
+    els.saveSettings.addEventListener("click", saveSettings);
+    els.clearSettings.addEventListener("click", clearSettings);
+    els.uploadAll.addEventListener("click", uploadAll);
+    els.copyAll.addEventListener("click", () => copyText(els.markdownOutput.value));
+    els.clearResults.addEventListener("click", () => {
+      state.results = [];
+      renderResults();
+      status("结果已清空");
+    });
+
+    els.libraryInput.addEventListener("change", (event) => {
+      addFiles(event.target.files);
+      event.target.value = "";
+    });
+
+    els.cameraInput.addEventListener("change", (event) => {
+      addFiles(event.target.files);
+      event.target.value = "";
+    });
+
+    for (const eventName of ["dragenter", "dragover"]) {
+      els.dropZone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        els.dropZone.classList.add("dragover");
+      });
+    }
+
+    for (const eventName of ["dragleave", "drop"]) {
+      els.dropZone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        els.dropZone.classList.remove("dragover");
+      });
+    }
+
+    els.dropZone.addEventListener("drop", (event) => {
+      addFiles(event.dataTransfer.files);
+    });
+
+    loadSettings();
+    renderQueue();
+    renderResults();
+  </script>
+</body>
+</html>
