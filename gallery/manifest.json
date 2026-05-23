@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-05-23T04:12:43.496Z",
+  "generatedAt": "2026-05-23T04:28:08.813Z",
   "owner": "ZenDylan",
   "repo": "blog-images",
   "branch": "main",
@@ -19,7 +19,8 @@
           "markdown": "![1-先利用notebookllm将关键词提取出来](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E7%90%86%E8%A7%A3%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%EF%BC%9F/1-%E5%85%88%E5%88%A9%E7%94%A8notebookllm%E5%B0%86%E5%85%B3%E9%94%AE%E8%AF%8D%E6%8F%90%E5%8F%96%E5%87%BA%E6%9D%A5.png)",
           "size": 671383,
           "mtime": "2026-05-21T02:40:35.412Z",
-          "sha256": "62b39553bd29"
+          "sha256": "62b39553bd29",
+          "source": "desktop"
         },
         {
           "title": "2-利用simplemind将关键词和定义展示在画布上",
@@ -30,7 +31,8 @@
           "markdown": "![2-利用simplemind将关键词和定义展示在画布上](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E7%90%86%E8%A7%A3%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%EF%BC%9F/2-%E5%88%A9%E7%94%A8simplemind%E5%B0%86%E5%85%B3%E9%94%AE%E8%AF%8D%E5%92%8C%E5%AE%9A%E4%B9%89%E5%B1%95%E7%A4%BA%E5%9C%A8%E7%94%BB%E5%B8%83%E4%B8%8A.png)",
           "size": 793621,
           "mtime": "2026-05-21T02:41:31.894Z",
-          "sha256": "01e382d27f50"
+          "sha256": "01e382d27f50",
+          "source": "desktop"
         }
       ]
     },
@@ -47,7 +49,8 @@
           "markdown": "![1-下载zip文件](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/1-%E4%B8%8B%E8%BD%BDzip%E6%96%87%E4%BB%B6.png)",
           "size": 513466,
           "mtime": "2026-05-21T01:17:30.794Z",
-          "sha256": "8be91d908aee"
+          "sha256": "8be91d908aee",
+          "source": "desktop"
         },
         {
           "title": "2-让codex辅助我们理解skill的作用",
@@ -58,7 +61,8 @@
           "markdown": "![2-让codex辅助我们理解skill的作用](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/2-%E8%AE%A9codex%E8%BE%85%E5%8A%A9%E6%88%91%E4%BB%AC%E7%90%86%E8%A7%A3skill%E7%9A%84%E4%BD%9C%E7%94%A8.png)",
           "size": 294513,
           "mtime": "2026-05-21T01:20:47.700Z",
-          "sha256": "d9605d478ba3"
+          "sha256": "d9605d478ba3",
+          "source": "desktop"
         },
         {
           "title": "3-从文件夹中认识一个skill包会包含哪些skill",
@@ -69,7 +73,8 @@
           "markdown": "![3-从文件夹中认识一个skill包会包含哪些skill](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/3-%E4%BB%8E%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E8%AE%A4%E8%AF%86%E4%B8%80%E4%B8%AAskill%E5%8C%85%E4%BC%9A%E5%8C%85%E5%90%AB%E5%93%AA%E4%BA%9Bskill.png)",
           "size": 847743,
           "mtime": "2026-05-21T01:23:25.978Z",
-          "sha256": "f08f2c52850c"
+          "sha256": "f08f2c52850c",
+          "source": "desktop"
         },
         {
           "title": "4-直接利用natuer-paper2ppt这个skill将论文转化为ppt",
@@ -80,7 +85,8 @@
           "markdown": "![4-直接利用natuer-paper2ppt这个skill将论文转化为ppt](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/4-%E7%9B%B4%E6%8E%A5%E5%88%A9%E7%94%A8natuer-paper2ppt%E8%BF%99%E4%B8%AAskill%E5%B0%86%E8%AE%BA%E6%96%87%E8%BD%AC%E5%8C%96%E4%B8%BAppt.png)",
           "size": 890110,
           "mtime": "2026-05-21T01:38:12.918Z",
-          "sha256": "63b9482ab210"
+          "sha256": "63b9482ab210",
+          "source": "desktop"
         },
         {
           "title": "5-得到的汇报ppt格式非常工整，基本上可以直接使用",
@@ -91,7 +97,8 @@
           "markdown": "![5-得到的汇报ppt格式非常工整，基本上可以直接使用](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/5-%E5%BE%97%E5%88%B0%E7%9A%84%E6%B1%87%E6%8A%A5ppt%E6%A0%BC%E5%BC%8F%E9%9D%9E%E5%B8%B8%E5%B7%A5%E6%95%B4%EF%BC%8C%E5%9F%BA%E6%9C%AC%E4%B8%8A%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8.png)",
           "size": 790129,
           "mtime": "2026-05-21T01:39:00.220Z",
-          "sha256": "229ec41b1ddf"
+          "sha256": "229ec41b1ddf",
+          "source": "desktop"
         }
       ]
     }
