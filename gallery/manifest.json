@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-05-23T04:28:08.813Z",
+  "generatedAt": "2026-05-23T04:31:16.321Z",
   "owner": "ZenDylan",
   "repo": "blog-images",
   "branch": "main",
@@ -38,7 +38,7 @@
     },
     {
       "title": "如何使用nature skills",
-      "count": 5,
+      "count": 6,
       "images": [
         {
           "title": "1-下载zip文件",
@@ -63,6 +63,18 @@
           "mtime": "2026-05-21T01:20:47.700Z",
           "sha256": "d9605d478ba3",
           "source": "desktop"
+        },
+        {
+          "title": "IMG_1556",
+          "fileName": "20260523-123113-01-IMG_1556-5350c137.jpg",
+          "relativePath": "20260523-123113-01-IMG_1556-5350c137.jpg",
+          "repoPath": "library/如何使用nature skills/20260523-123113-01-IMG_1556-5350c137.jpg",
+          "url": "https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/20260523-123113-01-IMG_1556-5350c137.jpg",
+          "markdown": "![IMG_1556](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8nature%20skills/20260523-123113-01-IMG_1556-5350c137.jpg)",
+          "size": 349157,
+          "mtime": "2026-05-23T04:31:16.134Z",
+          "source": "mobile",
+          "topic": "如何使用nature skills"
         },
         {
           "title": "3-从文件夹中认识一个skill包会包含哪些skill",
@@ -103,5 +115,5 @@
       ]
     }
   ],
-  "totalImages": 7
+  "totalImages": 8
 }
