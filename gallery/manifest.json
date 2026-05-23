@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-05-23T07:24:47.613Z",
+  "generatedAt": "2026-05-23T07:58:06.495Z",
   "owner": "ZenDylan",
   "repo": "blog-images",
   "branch": "main",
@@ -116,7 +116,7 @@
     },
     {
       "title": "习惯",
-      "count": 6,
+      "count": 7,
       "images": [
         {
           "title": "IMG_1533",
@@ -189,9 +189,21 @@
           "mtime": "2026-05-23T07:24:47.430Z",
           "source": "mobile",
           "topic": "习惯"
+        },
+        {
+          "title": "IMG_1571",
+          "fileName": "20260523-155801-01-IMG_1571-c84392fd.jpg",
+          "relativePath": "20260523-155801-01-IMG_1571-c84392fd.jpg",
+          "repoPath": "library/习惯/20260523-155801-01-IMG_1571-c84392fd.jpg",
+          "url": "https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E4%B9%A0%E6%83%AF/20260523-155801-01-IMG_1571-c84392fd.jpg",
+          "markdown": "![IMG_1571](https://raw.githubusercontent.com/ZenDylan/blog-images/main/library/%E4%B9%A0%E6%83%AF/20260523-155801-01-IMG_1571-c84392fd.jpg)",
+          "size": 286897,
+          "mtime": "2026-05-23T07:58:06.309Z",
+          "source": "mobile",
+          "topic": "习惯"
         }
       ]
     }
   ],
-  "totalImages": 14
+  "totalImages": 15
 }
